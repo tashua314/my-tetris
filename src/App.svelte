@@ -13,6 +13,8 @@
     let score = 0;
     let level = 1;
     let gameStartTime = 0;
+    let pausedAt = 0;
+    let pauseAccumulated = 0;
     let time = '00:00';
     let isLevelUp = false;
     let dropInterval = 1000;
@@ -89,6 +91,8 @@
         score = 0;
         level = 1;
         gameStartTime = Date.now();
+        pausedAt = 0;
+        pauseAccumulated = 0;
         gameState = 'PLAYING';
         gameControls?.startGame?.(gameStartTime); // Gameコンポーネントのスタート関数を呼び出す
     }
@@ -108,7 +112,9 @@
 
     function checkLevel(event) {
         dropInterval = event.detail; // Gameからインターバルを受け取る（GameUIで表示する場合）
-        const elapsed = Math.floor((Date.now() - gameStartTime) / 1000);
+        const now = Date.now();
+        const effectiveStart = gameStartTime + pauseAccumulated;
+        const elapsed = Math.floor((now - effectiveStart) / 1000);
 
         // Time update
         const m = Math.floor(elapsed / 60)
@@ -168,9 +174,19 @@
     const rotate = (dir = 1) => {
         if (canControl()) gameControls.playerRotate?.(dir);
     };
+
+    // --- Visibility pause handling ---
+    function handleVisibilityChange() {
+        if (document.hidden) {
+            pausedAt = Date.now();
+        } else if (pausedAt) {
+            pauseAccumulated += Date.now() - pausedAt;
+            pausedAt = 0;
+        }
+    }
 </script>
 
-<svelte:window on:keydown={handleKeydown} />
+<svelte:window on:keydown={handleKeydown} on:visibilitychange={handleVisibilityChange} />
 
 <svelte:head>
     <script src="https://cdn.tailwindcss.com"></script>

@@ -20,5 +20,8 @@
         "prettier-plugin-svelte": "^3.2.6",
         "svelte": "^5.43.8",
         "vite": "^7.2.4"
+    },
+    "dependencies": {
+        "@vercel/analytics": "^1.6.1"
     }
 }

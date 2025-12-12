@@ -269,38 +269,67 @@
 </svelte:head>
 
 <div
-    class="bg-black text-white font-mono h-screen w-screen flex flex-col justify-center items-center overflow-auto select-none p-4"
+    class="bg-black text-white font-mono min-h-screen w-screen flex flex-col items-center overflow-auto select-none p-4 gap-6"
 >
-    <div class="flex gap-6">
-        <ControlPad
-            {gameState}
-            {lang}
-            controlsText={TEXT[lang].controls}
-            onStartGame={handleStartGame}
-            {moveLeft}
-            {moveRight}
-            {softDrop}
-            {hardDrop}
-            rotateLeft={() => rotate(-1)}
-            rotateRight={() => rotate(1)}
-        />
+    <div class="flex-1 flex items-center justify-center">
+        <div class="flex gap-6">
+            <ControlPad
+                {gameState}
+                {lang}
+                controlsText={TEXT[lang].controls}
+                onStartGame={handleStartGame}
+                {moveLeft}
+                {moveRight}
+                {softDrop}
+                {hardDrop}
+                rotateLeft={() => rotate(-1)}
+                rotateRight={() => rotate(1)}
+            />
 
-        <Game
-            bind:gameState
-            bind:score
-            bind:level
-            bind:currentPattern
-            let:tetrisEffectActive
-            let:pieceQueue
-            bind:nextCanvas={nextCanvasRef}
-            bind:controls={gameControls}
-            {playSound}
-            {playArpeggio}
-            on:gameOver={handleGameOver}
-            on:scoreUpdate={handleScoreUpdate}
-            on:hardDropScore={handleHardDropScore}
-            on:checkLevel={checkLevel}
-        >
+            <Game
+                bind:gameState
+                bind:score
+                bind:level
+                bind:currentPattern
+                let:tetrisEffectActive
+                let:pieceQueue
+                bind:nextCanvas={nextCanvasRef}
+                bind:controls={gameControls}
+                {playSound}
+                {playArpeggio}
+                on:gameOver={handleGameOver}
+                on:scoreUpdate={handleScoreUpdate}
+                on:hardDropScore={handleHardDropScore}
+                on:checkLevel={checkLevel}
+            >
+                <GameUI
+                    bind:gameState
+                    bind:score
+                    bind:level
+                    bind:time
+                    bind:lang
+                    bind:masterVolume
+                    bind:isMuted
+                    bind:currentPattern
+                    bind:isLevelUp
+                    bind:showDebugModal
+                    bind:showSettingsModal
+                    bind:showRankingModal
+                    {updateVolume}
+                    {playSound}
+                    {playArpeggio}
+                    bind:nextCanvasRef
+                    on:startGame={handleStartGame}
+                    on:triggerShake={() => gameControls?.triggerShake?.()}
+                    on:touchMove={gameControls ? (e) => gameControls.playerMove?.(e.detail) : null}
+                    on:touchRotate={gameControls ? (e) => gameControls.playerRotate?.(e.detail) : null}
+                    on:touchSoftDrop={gameControls ? () => gameControls.playerDrop?.() : null}
+                    on:touchHardDrop={gameControls ? () => gameControls.playerHardDrop?.() : null}
+                    {tetrisEffectActive}
+                    {pieceQueue}
+                />
+            </Game>
+
             <GameUI
                 bind:gameState
                 bind:score
@@ -314,41 +343,46 @@
                 bind:showDebugModal
                 bind:showSettingsModal
                 bind:showRankingModal
+                bind:nextCanvasRef
                 {updateVolume}
                 {playSound}
                 {playArpeggio}
-                bind:nextCanvasRef
                 on:startGame={handleStartGame}
                 on:triggerShake={() => gameControls?.triggerShake?.()}
-                on:touchMove={gameControls ? (e) => gameControls.playerMove?.(e.detail) : null}
-                on:touchRotate={gameControls ? (e) => gameControls.playerRotate?.(e.detail) : null}
-                on:touchSoftDrop={gameControls ? () => gameControls.playerDrop?.() : null}
-                on:touchHardDrop={gameControls ? () => gameControls.playerHardDrop?.() : null}
-                {tetrisEffectActive}
-                {pieceQueue}
+                panelOnly={true}
             />
-        </Game>
-
-        <GameUI
-            bind:gameState
-            bind:score
-            bind:level
-            bind:time
-            bind:lang
-            bind:masterVolume
-            bind:isMuted
-            bind:currentPattern
-            bind:isLevelUp
-            bind:showDebugModal
-            bind:showSettingsModal
-            bind:showRankingModal
-            bind:nextCanvasRef
-            {updateVolume}
-            {playSound}
-            {playArpeggio}
-            on:startGame={handleStartGame}
-            on:triggerShake={() => gameControls?.triggerShake?.()}
-            panelOnly={true}
-        />
+        </div>
     </div>
+
+    <footer class="w-full max-w-5xl text-xs text-gray-500 flex flex-col md:flex-row md:items-center md:justify-between gap-2 border-t border-white/10 pt-4">
+        <div class="text-gray-300">Need help or want to report a bug?</div>
+        <div class="flex flex-wrap gap-3">
+            <a
+                class="text-cyan-300 hover:text-white underline underline-offset-4"
+                href="https://github.com/tashua314/my-tetris/issues"
+                target="_blank"
+                rel="noreferrer"
+            >
+                GitHub Issues
+            </a>
+            <span class="text-gray-600">/</span>
+            <a
+                class="text-cyan-300 hover:text-white underline underline-offset-4"
+                href="https://github.com/tashua314"
+                target="_blank"
+                rel="noreferrer"
+            >
+                @tashua314
+            </a>
+            <span class="text-gray-600">/</span>
+            <a
+                class="text-cyan-300 hover:text-white underline underline-offset-4"
+                href="https://x.com/tashua314"
+                target="_blank"
+                rel="noreferrer"
+            >
+                X (Twitter)
+            </a>
+        </div>
+    </footer>
 </div>

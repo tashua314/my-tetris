@@ -189,7 +189,6 @@
 <svelte:window on:keydown={handleKeydown} on:visibilitychange={handleVisibilityChange} />
 
 <svelte:head>
-    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body,
         html {
